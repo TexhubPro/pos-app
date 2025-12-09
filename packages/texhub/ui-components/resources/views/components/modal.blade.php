@@ -19,7 +19,7 @@
             </div>
             <div class="relative">
                 <div class="space-y-4 h-[calc(100vh-290px)] overflow-hidden">
-                    <div class="overflow-y-scroll h-min">
+                    <div class="overflow-y-scroll h-96">
                         {{ $slot }}
                     </div>
 

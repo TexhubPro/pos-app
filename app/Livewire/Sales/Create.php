@@ -196,14 +196,11 @@ class Create extends Component
         $boxQty = (int) ($this->box_qty ?: 0);
         $unitQty = (int) ($this->unit_qty ?: 0);
 
-        if ($boxQty > 0 && $unitQty === $boxQty * $unitsPerBox) {
+        // Если указали коробки — считаем, что продажи идут коробками, свободные штуки не учитываем
+        if ($boxQty > 0) {
             $unitQty = 0;
-        }
-
-        if ($unitQty <= 0 && $boxQty > 0) {
-            $unitQty = $boxQty * $unitsPerBox;
-        }
-        if ($boxQty <= 0 && $unitQty > 0) {
+        } elseif ($unitQty > 0) {
+            // Продаём только штуки: пересчитаем требуемые коробки
             $boxQty = (int) ceil($unitQty / $unitsPerBox);
         }
 
@@ -264,7 +261,7 @@ class Create extends Component
         }
         $this->syncing = true;
         $unitsPerBox = $this->unitsPerBox();
-        $this->box_qty = max(0, (int) ceil(($value ?: 0) / $unitsPerBox));
+        $this->box_qty = $this->box_qty > 0 ? $this->box_qty : max(0, (int) ceil(($value ?: 0) / $unitsPerBox));
         if ($this->price_unit > 0 && $unitsPerBox > 0) {
             $this->price_box = $this->price_unit * $unitsPerBox;
         }

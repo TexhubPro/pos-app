@@ -120,8 +120,7 @@
                 $priceUnitSanitized = (float) str_replace(',', '.', $price_unit ?? 0);
                 $unitsFromBoxes = ($box_qty ?: 0) * $unitsPerBox;
                 $unitQtyClean = $unit_qty;
-                if ($box_qty > 0 && $unit_qty === $unitsFromBoxes) {
-                    // если поле штук просто повторяет коробки*шт, считаем это автозаполнением
+                if ($box_qty > 0) {
                     $unitQtyClean = 0;
                 }
                 $totalUnits = max(0, $unitsFromBoxes + ($unitQtyClean ?: 0));

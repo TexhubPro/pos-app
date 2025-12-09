@@ -66,86 +66,161 @@
         </div>
 
         <div class="space-y-3">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-900">{{ __('История закупок') }}</h3>
-                    <p class="text-sm text-gray-500">{{ __('Только по выбранному товару') }}</p>
-                </div>
+            <div class="flex items-center gap-3">
+                <button class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold bg-blue-600 text-white"
+                    data-target="tab-purchases">{{ __('История закупок') }}</button>
+                <button class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold bg-gray-100 text-gray-700"
+                    data-target="tab-sales">{{ __('История продаж') }}</button>
             </div>
 
-            <x-ui::table class="min-w-full">
-                <x-slot:head>
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
-                            {{ __('Дата') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
-                            {{ __('Фирма') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
-                            {{ __('К/р') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
-                            {{ __('Осталось К/р') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
-                            {{ __('Цена/кор., $') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
-                            {{ __('Дост. Китай, $') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
-                            {{ __('Дост. Тадж., $') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
-                            {{ __('Себест., $') }}</th>
-                        <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
-                            {{ __('Действия') }}</th>
-                    </tr>
-                </x-slot:head>
+            <div class="tab-panel" id="tab-purchases">
+                <x-ui::table class="min-w-full">
+                    <x-slot:head>
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                                {{ __('Дата') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                                {{ __('Фирма') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                                {{ __('К/р') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                                {{ __('Осталось К/р') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                                {{ __('Цена/кор., $') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                                {{ __('Дост. Китай, $') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                                {{ __('Дост. Тадж., $') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                                {{ __('Себест., $') }}</th>
+                            <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                                {{ __('Действия') }}</th>
+                        </tr>
+                    </x-slot:head>
 
-                @forelse ($purchases as $purchase)
-                    <tr class="hover:bg-gray-50/60 transition">
-                        <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
-                            {{ $purchase->created_at->format('d.m.Y') }}
-                        </td>
-                        <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap max-w-[12rem]">
-                            <span class="truncate block">{{ $purchase->firm?->name ?? '—' }}</span>
-                        </td>
-                        @php
-                            $received = $purchase->receipts->sum('box_qty');
-                            $remaining = max(0, ($purchase->box_qty ?? 0) - $received);
-                        @endphp
-                        <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">{{ $purchase->box_qty ?? 0 }}</td>
-                        <td class="px-4 py-3 text-sm font-semibold {{ $remaining > 0 ? 'text-amber-600' : 'text-green-600' }} whitespace-nowrap">
-                            {{ $remaining }}
-                        </td>
-                        <td class="px-4 py-3 text-sm font-semibold text-gray-800 whitespace-nowrap">
-                            {{ number_format($purchase->purchase_price, 2) }}
-                        </td>
-                        <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
-                            {{ number_format($purchase->delivery_cn, 2) }}
-                        </td>
-                        <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
-                            {{ number_format($purchase->delivery_tj, 2) }}
-                        </td>
-                        <td class="px-4 py-3 text-sm font-semibold text-gray-800 whitespace-nowrap">
-                            {{ number_format($purchase->cost_per_unit, 4) }}
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('purchases.show', $purchase) }}"
-                                    class="inline-flex items-center justify-center h-10 w-10 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition"
-                                    title="{{ __('Просмотр закупки') }}">
-                                    <svg class="size-5" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M2.5 12.5s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12.5 2.5 12.5Z" />
-                                        <circle cx="12" cy="12.5" r="3" />
-                                    </svg>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="8" class="px-4 py-6 text-center text-gray-500">{{ __('Закупок пока нет') }}</td>
-                    </tr>
-                @endforelse
-            </x-ui::table>
+                    @forelse ($purchases as $purchase)
+                        <tr class="hover:bg-gray-50/60 transition">
+                            <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
+                                {{ $purchase->created_at->format('d.m.Y') }}
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap max-w-[12rem]">
+                                <span class="truncate block">{{ $purchase->firm?->name ?? '—' }}</span>
+                            </td>
+                            @php
+                                $received = $purchase->receipts->sum('box_qty');
+                                $remaining = max(0, ($purchase->box_qty ?? 0) - $received);
+                            @endphp
+                            <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">{{ $purchase->box_qty ?? 0 }}</td>
+                            <td class="px-4 py-3 text-sm font-semibold {{ $remaining > 0 ? 'text-amber-600' : 'text-green-600' }} whitespace-nowrap">
+                                {{ $remaining }}
+                            </td>
+                            <td class="px-4 py-3 text-sm font-semibold text-gray-800 whitespace-nowrap">
+                                {{ number_format($purchase->purchase_price, 2) }}
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
+                                {{ number_format($purchase->delivery_cn, 2) }}
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
+                                {{ number_format($purchase->delivery_tj, 2) }}
+                            </td>
+                            <td class="px-4 py-3 text-sm font-semibold text-gray-800 whitespace-nowrap">
+                                {{ number_format($purchase->cost_per_unit, 4) }}
+                            </td>
+                            <td class="px-4 py-3">
+                                <div class="flex items-center justify-end gap-2">
+                                    <a href="{{ route('purchases.show', $purchase) }}"
+                                        class="inline-flex items-center justify-center h-10 w-10 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition"
+                                        title="{{ __('Просмотр закупки') }}">
+                                        <svg class="size-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M2.5 12.5s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12.5 2.5 12.5Z" />
+                                            <circle cx="12" cy="12.5" r="3" />
+                                        </svg>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="9" class="px-4 py-6 text-center text-gray-500">{{ __('Закупок пока нет') }}</td>
+                        </tr>
+                    @endforelse
+                </x-ui::table>
+            </div>
+
+            <div class="tab-panel hidden" id="tab-sales">
+                <x-ui::table class="min-w-full">
+                    <x-slot:head>
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                                {{ __('Дата') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                                {{ __('Клиент') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                                {{ __('Шт., кор.') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                                {{ __('Итого, $') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                                {{ __('Оплата') }}</th>
+                        </tr>
+                    </x-slot:head>
+                    @forelse ($sales as $sale)
+                        <tr class="hover:bg-gray-50/60 transition">
+                            <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
+                                {{ $sale->created_at->format('d.m.Y') }}
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap max-w-[12rem]">
+                                <span class="truncate block">{{ $sale->client?->name ?? '—' }}</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
+                                {{ $sale->total_units }} / {{ $sale->box_qty }}
+                            </td>
+                            <td class="px-4 py-3 text-sm font-semibold text-gray-800 whitespace-nowrap">
+                                {{ number_format($sale->total_price, 2) }}
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
+                                @switch($sale->payment_type)
+                                    @case('debt')
+                                        {{ __('В долг') }}
+                                        @break
+                                    @case('mixed')
+                                        {{ __('Смешанный') }}
+                                        @break
+                                    @default
+                                        {{ __('Наличные') }}
+                                @endswitch
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-4 py-6 text-center text-gray-500">{{ __('Продаж пока нет') }}</td>
+                        </tr>
+                    @endforelse
+                </x-ui::table>
+            </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('.tab-btn');
+            const panels = document.querySelectorAll('.tab-panel');
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    buttons.forEach(b => b.classList.remove('bg-blue-600', 'text-white'));
+                    buttons.forEach(b => b.classList.add('bg-gray-100', 'text-gray-700'));
+                    panels.forEach(p => p.classList.add('hidden'));
+
+                    btn.classList.add('bg-blue-600', 'text-white');
+                    btn.classList.remove('bg-gray-100', 'text-gray-700');
+
+                    const targetId = btn.dataset.target;
+                    const target = document.getElementById(targetId);
+                    if (target) target.classList.remove('hidden');
+                });
+            });
+        });
+    </script>
 </x-layouts.dashboard>

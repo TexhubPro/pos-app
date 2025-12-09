@@ -32,10 +32,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/products/{product}', function (Product $product) {
         $product->load(['category', 'purchases.firm', 'purchases.receipts']);
         $purchases = $product->purchases()->with(['firm', 'receipts'])->latest()->get();
+        $sales = $product->sales()->with(['client'])->latest()->get();
 
         return view('products.show', [
             'product' => $product,
             'purchases' => $purchases,
+            'sales' => $sales,
         ]);
     })->name('products.show');
     Route::get('/purchases', PurchasesIndex::class)->name('purchases');

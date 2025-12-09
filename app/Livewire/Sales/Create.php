@@ -46,6 +46,7 @@ class Create extends Component
 
     public function submit(): void
     {
+        session()->forget('status');
         $this->sanitizeNumericFields();
         $this->validate();
 
@@ -311,6 +312,7 @@ class Create extends Component
 
     protected function flashQuantityError(string $message): void
     {
+        session()->forget('status');
         $this->addError('quantity', $message);
     }
 

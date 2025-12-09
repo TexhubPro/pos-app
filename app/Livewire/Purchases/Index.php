@@ -193,20 +193,6 @@ class Index extends Component
                 ]
             );
 
-            if ($previous && $previous->product) {
-                $oldUnitsPerBox = max(0, $previous->product->units_per_box ?? 0);
-                $previous->product->box_count = max(0, ($previous->product->box_count ?? 0) - ($previous->box_qty ?? 0));
-                $previous->product->quantity = max(0, ($previous->product->quantity ?? 0) - (($previous->box_qty ?? 0) * $oldUnitsPerBox));
-                $previous->product->save();
-            }
-
-            if ($purchase->product) {
-                $newUnitsPerBox = max(0, $purchase->product->units_per_box ?? 0);
-                $purchase->product->box_count = ($purchase->product->box_count ?? 0) + $this->box_qty;
-                $purchase->product->quantity = ($purchase->product->quantity ?? 0) + ($this->box_qty * $newUnitsPerBox);
-                $purchase->product->save();
-            }
-
             $purchase->received_box_qty = ($purchase->received_box_qty ?? 0);
             $purchase->save();
 
@@ -260,12 +246,15 @@ class Index extends Component
     {
         if ($this->deleteId) {
             DB::transaction(function () {
-                $purchase = Purchase::with('product', 'documents')->find($this->deleteId);
+                $purchase = Purchase::with('product', 'documents', 'receipts')->find($this->deleteId);
                 if ($purchase && $purchase->product) {
                     $units = max(0, $purchase->product->units_per_box ?? 0);
-                    $purchase->product->box_count = max(0, ($purchase->product->box_count ?? 0) - ($purchase->box_qty ?? 0));
-                    $purchase->product->quantity = max(0, ($purchase->product->quantity ?? 0) - (($purchase->box_qty ?? 0) * $units));
-                    $purchase->product->save();
+                    $receivedBoxes = $purchase->receipts()->sum('box_qty');
+                    if ($receivedBoxes > 0) {
+                        $purchase->product->box_count = max(0, ($purchase->product->box_count ?? 0) - $receivedBoxes);
+                        $purchase->product->quantity = max(0, ($purchase->product->quantity ?? 0) - ($receivedBoxes * $units));
+                        $purchase->product->save();
+                    }
                 }
 
                 if ($purchase) {
@@ -298,6 +287,7 @@ class Index extends Component
 
                 if ($purchase) {
                     $purchase->documents()->delete();
+                    $purchase->receipts()->delete();
                     $purchase->delete();
                 }
             });

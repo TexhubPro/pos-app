@@ -1,0 +1,19 @@
+{
+    "name": "texhub/ui-components",
+    "description": "UI components library for the project (local package).",
+    "type": "library",
+    "license": "MIT",
+    "version": "1.0.0",
+    "autoload": {
+        "psr-4": {
+            "Texhub\\UiComponents\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Texhub\\UiComponents\\UiComponentsServiceProvider"
+            ]
+        }
+    }
+}

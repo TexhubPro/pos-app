@@ -83,8 +83,8 @@ class Create extends Component
                 return;
             }
 
-            $pricePerUnit = (float) ($this->price_unit ?: 0);
-            $pricePerBox = (float) ($this->price_box ?: 0);
+            $pricePerUnit = $this->toFloat($this->price_unit);
+            $pricePerBox = $this->toFloat($this->price_box);
             if ($pricePerUnit <= 0 && $pricePerBox > 0 && $unitsPerBox > 0) {
                 $pricePerUnit = $pricePerBox / $unitsPerBox;
             }
@@ -101,7 +101,7 @@ class Create extends Component
             } elseif ($this->payment_type === 'debt') {
                 $debt = $totalPrice;
             } else {
-                $cashInput = max(0, $this->cash_amount ?? 0);
+                $cashInput = max(0, $this->toFloat($this->cash_amount));
                 $cash = min($cashInput, $totalPrice);
                 $debt = max(0, $totalPrice - $cash);
             }

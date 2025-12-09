@@ -27,11 +27,11 @@ class Index extends Component
 
     public $product_id = '';
     public $firm_id = '';
-    public float $purchase_price = 0;
+    public $purchase_price = 0;
     public string $payment_method = 'cash';
-    public float $delivery_volume = 0;
-    public float $delivery_cn_rate = 0;
-    public float $delivery_tj_rate = 0;
+    public $delivery_volume = 0;
+    public $delivery_cn_rate = 0;
+    public $delivery_tj_rate = 0;
     public int $box_qty = 1;
     public array $files = [];
 
@@ -124,9 +124,14 @@ class Index extends Component
 
             $product = Product::findOrFail($this->product_id);
             $units = max(1, $product->units_per_box ?: 1);
-            $deliveryCnTotal = $this->delivery_volume * $this->delivery_cn_rate;
-            $deliveryTjTotal = $this->delivery_volume * $this->delivery_tj_rate;
-            $goodsTotal = $this->purchase_price * $this->box_qty;
+            $purchase_price = $this->sanitizeFloat($this->purchase_price);
+            $delivery_volume = $this->sanitizeFloat($this->delivery_volume);
+            $delivery_cn_rate = $this->sanitizeFloat($this->delivery_cn_rate);
+            $delivery_tj_rate = $this->sanitizeFloat($this->delivery_tj_rate);
+
+            $deliveryCnTotal = $delivery_volume * $delivery_cn_rate;
+            $deliveryTjTotal = $delivery_volume * $delivery_tj_rate;
+            $goodsTotal = $purchase_price * $this->box_qty;
             $cashPart = $goodsTotal + $deliveryCnTotal; // всегда списываем из банка
             $boxTotal = $cashPart + $deliveryTjTotal;
             $unitCost = $boxTotal / ($units * $this->box_qty);
@@ -165,13 +170,13 @@ class Index extends Component
                 [
                     'product_id' => $this->product_id,
                     'firm_id' => $this->firm_id,
-                    'purchase_price' => $this->purchase_price,
+                    'purchase_price' => $purchase_price,
                     'payment_method' => $this->payment_method,
-                    'delivery_cn_volume' => $this->delivery_volume,
-                    'delivery_cn_rate' => $this->delivery_cn_rate,
+                    'delivery_cn_volume' => $delivery_volume,
+                    'delivery_cn_rate' => $delivery_cn_rate,
                     'delivery_cn' => $deliveryCnTotal,
-                    'delivery_tj_volume' => $this->delivery_volume,
-                    'delivery_tj_rate' => $this->delivery_tj_rate,
+                    'delivery_tj_volume' => $delivery_volume,
+                    'delivery_tj_rate' => $delivery_tj_rate,
                     'delivery_tj' => $deliveryTjTotal,
                     'cost_per_unit' => $unitCost,
                     'box_qty' => $this->box_qty,

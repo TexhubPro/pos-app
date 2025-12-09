@@ -195,7 +195,7 @@
                 <div class="space-y-1.5">
                     <x-ui::label for="purchase_price">{{ __('Цена за коробку, $') }}</x-ui::label>
                     <x-ui::input id="purchase_price" type="text" inputmode="decimal"
-                        wire:model.live="purchase_price" :error="$errors->first('purchase_price')" />
+                        wire:model.live.debounce.2000ms="purchase_price" :error="$errors->first('purchase_price')" />
                 </div>
                 <div class="space-y-1.5">
                     <x-ui::label for="box_qty">{{ __('Коробок покупаем') }}</x-ui::label>
@@ -210,18 +210,18 @@
                     <div class="space-y-1.5">
                         <x-ui::label for="delivery_volume">{{ __('Объём, куб') }}</x-ui::label>
                         <x-ui::input id="delivery_volume" type="text" inputmode="decimal"
-                            wire:model.live="delivery_volume" :error="$errors->first('delivery_volume')" placeholder="{{ __('Куб') }}" />
+                            wire:model.live.debounce.2000ms="delivery_volume" :error="$errors->first('delivery_volume')" placeholder="{{ __('Куб') }}" />
                     </div>
                     <div class="space-y-1.5">
                         <x-ui::label for="delivery_cn_rate">{{ __('Китай: цена за куб, $') }}</x-ui::label>
                         <x-ui::input id="delivery_cn_rate" type="text" inputmode="decimal"
-                            wire:model.live="delivery_cn_rate" :error="$errors->first('delivery_cn_rate')"
+                            wire:model.live.debounce.2000ms="delivery_cn_rate" :error="$errors->first('delivery_cn_rate')"
                             placeholder="{{ __('Цена/куб, $') }}" />
                     </div>
                     <div class="space-y-1.5">
                         <x-ui::label for="delivery_tj_rate">{{ __('TJ: цена за куб, $') }}</x-ui::label>
                         <x-ui::input id="delivery_tj_rate" type="text" inputmode="decimal"
-                            wire:model.live="delivery_tj_rate" :error="$errors->first('delivery_tj_rate')"
+                            wire:model.live.debounce.2000ms="delivery_tj_rate" :error="$errors->first('delivery_tj_rate')"
                             placeholder="{{ __('Цена/куб, $') }}" />
                     </div>
                     <div class="space-y-1.5">

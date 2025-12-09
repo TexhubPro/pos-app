@@ -17,7 +17,7 @@
                     </svg>
                 </button>
             </div>
-            <div class="space-y-4 max-h-[calc(100vh-150px)] overflow-hidden overflow-y-scroll">
+            <div class="space-y-4 max-h-[calc(100vh-120px)] overflow-hidden overflow-y-scroll">
                 {{ $slot }}
             </div>
         </div>

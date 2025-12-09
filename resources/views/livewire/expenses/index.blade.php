@@ -102,6 +102,16 @@
                     'dushanbe_city' => __('Душанбе сити'),
                     'alif' => 'Alif',
                 ];
+                $categoryLabels = [
+                    'rent' => __('Аренда'),
+                    'salary' => __('Зарплата'),
+                    'logistics' => __('Логистика / доставка'),
+                    'tax' => __('Налоги и сборы'),
+                    'inventory' => __('Закупка материалов'),
+                    'marketing' => __('Маркетинг'),
+                    'services' => __('Услуги / подписки'),
+                    'other' => __('Прочее'),
+                ];
             @endphp
 
             @forelse ($expenses as $expense)
@@ -110,7 +120,7 @@
                         {{ $expense->created_at->format('d.m.Y H:i') }}
                     </td>
                     <td class="px-4 py-3 text-sm font-semibold text-gray-900 whitespace-nowrap max-w-[14rem]">
-                        <span class="truncate block">{{ $expense->source ?: '—' }}</span>
+                        <span class="truncate block">{{ $categoryLabels[$expense->source] ?? ($expense->source ?: '—') }}</span>
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
                         {{ $methodLabels[$expense->method] ?? ($expense->method ?? '—') }}

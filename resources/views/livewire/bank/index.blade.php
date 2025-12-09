@@ -251,32 +251,42 @@
             </x-slot:head>
 
             @php
-                $typeLabels = [
-                    'deposit' => __('Вклад'),
-                    'withdraw' => __('Снятие'),
-                    'client_payment' => __('Оплата клиента'),
-                    'firm_payment' => __('Оплата фирме'),
-                    'expense' => __('Расход'),
-                ];
-                $methodLabels = [
-                    'cash' => __('Наличные'),
-                    'card_milli' => __('Карта Milli'),
-                    'dushanbe_city' => __('Душанбе сити'),
-                    'alif' => 'Alif',
-                ];
-            @endphp
+            $typeLabels = [
+                'deposit' => __('Вклад'),
+                'withdraw' => __('Снятие'),
+                'client_payment' => __('Оплата клиента'),
+                'firm_payment' => __('Оплата фирме'),
+                'expense' => __('Расход'),
+            ];
+            $methodLabels = [
+                'cash' => __('Наличные'),
+                'card_milli' => __('Карта Milli'),
+                'dushanbe_city' => __('Душанбе сити'),
+                'alif' => 'Alif',
+            ];
+            $categoryLabels = [
+                'rent' => __('Аренда'),
+                'salary' => __('Зарплата'),
+                'logistics' => __('Логистика / доставка'),
+                'tax' => __('Налоги и сборы'),
+                'inventory' => __('Закупка материалов'),
+                'marketing' => __('Маркетинг'),
+                'services' => __('Услуги / подписки'),
+                'other' => __('Прочее'),
+            ];
+        @endphp
 
-            @forelse ($transactions as $tx)
-                @php
-                    $sign = in_array($tx->type, ['withdraw', 'firm_payment']) ? '-' : '+';
-                    $detail = $tx->comment;
-                    if (!$detail) {
-                        $detail = $tx->source;
-                    }
-                    if (!$detail && $tx->client) {
-                        $detail = $tx->client->name;
-                    }
-                    if (!$detail && $tx->firm) {
+        @forelse ($transactions as $tx)
+            @php
+                $sign = in_array($tx->type, ['withdraw', 'firm_payment', 'expense']) ? '-' : '+';
+                $detail = $tx->comment;
+                if (!$detail) {
+                    $detail = $tx->type === 'expense' ? ($categoryLabels[$tx->source] ?? $tx->source) : $tx->source;
+                }
+                if (!$detail && $tx->client) {
+                    $detail = $tx->client->name;
+                }
+                if (!$detail && $tx->firm) {
                         $detail = $tx->firm->name;
                     }
                 @endphp

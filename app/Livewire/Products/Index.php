@@ -50,7 +50,7 @@ class Index extends Component
             $boxes = max(0, (int) $this->box_count);
             $units = max(0, (int) $this->units_per_box);
             $autoQuantity = $boxes * $units;
-            if ($autoQuantity > 0) {
+            if ($autoQuantity > 0 && (int) $this->quantity === 0) {
                 $this->quantity = $autoQuantity;
             }
         }

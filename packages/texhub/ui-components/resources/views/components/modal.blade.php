@@ -20,7 +20,10 @@
             </div>
             <div class="space-y-4 relative max-h-[50vh] sm:max-h-[60vh] overflow-hidden pr-1">
                 <div class="overflow-y-scroll h-[50vh]">
-                    {{ $slot }}
+                    <div>
+
+                        {{ $slot }}
+                    </div>
                 </div>
             </div>
         </div>

@@ -182,12 +182,12 @@
                 </div>
                 <div class="space-y-1.5">
                     <x-ui::label for="box_count">{{ __('Коробок в наличии') }}</x-ui::label>
-                    <x-ui::input id="box_count" type="number" min="0" wire:model.live.debounce.400ms="box_count"
+                    <x-ui::input id="box_count" type="number" min="0" wire:model.debounce.2000ms="box_count"
                         placeholder="0" :error="$errors->first('box_count')" />
                 </div>
                 <div class="space-y-1.5">
                     <x-ui::label for="units_per_box">{{ __('Штук в коробке') }}</x-ui::label>
-                    <x-ui::input id="units_per_box" type="number" min="0" wire:model.live.debounce.400ms="units_per_box"
+                    <x-ui::input id="units_per_box" type="number" min="0" wire:model.debounce.2000ms="units_per_box"
                         placeholder="0" :error="$errors->first('units_per_box')" />
                 </div>
             </div>

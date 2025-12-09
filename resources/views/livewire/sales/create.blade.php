@@ -26,8 +26,7 @@
                         class="h-12 w-full rounded-xl bg-white border border-gray-200 px-3 text-base font-semibold text-gray-800 focus:outline-2 focus:outline-blue-600">
                         <option value="">{{ __('Выберите клиента') }}</option>
                         @foreach ($clients as $client)
-                            <option value="{{ $client->id }}">{{ $product->category->name . ' - ' . $client->name }}
-                                ({{ $client->phone }})</option>
+                            <option value="{{ $client->id }}">{{ $client->name }} ({{ $client->phone }})</option>
                         @endforeach
                     </select>
                     @error('client_id')
@@ -40,7 +39,9 @@
                         class="h-12 w-full rounded-xl bg-white border border-gray-200 px-3 text-base font-semibold text-gray-800 focus:outline-2 focus:outline-blue-600">
                         <option value="">{{ __('Выберите товар') }}</option>
                         @foreach ($products as $product)
-                            <option value="{{ $product->id }}">{{ $product->name }}</option>
+                            <option value="{{ $product->id }}">
+                                {{ $product->category->name . ' - ' . $product->name }}
+                            </option>
                         @endforeach
                     </select>
                     @error('product_id')

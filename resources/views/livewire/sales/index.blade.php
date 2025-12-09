@@ -55,8 +55,7 @@
                         <span class="truncate block">{{ $sale->client?->name ?? '—' }}</span>
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap max-w-[12rem]">
-                        <span
-                            class="truncate block">{{ $sale->product->category->name ?? ('' . ' - ' . $sale->product?->name ?? '—') }}</span>
+                        <span class="truncate block">{{ $sale->product?->name ?? '—' }}</span>
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
                         {{ $sale->total_units }} / {{ $sale->box_qty }}

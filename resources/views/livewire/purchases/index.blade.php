@@ -242,24 +242,32 @@
             </div>
 
             @php
-                $selectedProduct = collect($products)->firstWhere('id', $product_id);
-                $units = $selectedProduct?->units_per_box ?: 0;
-                $deliveryCnTotal = $delivery_volume * $delivery_cn_rate;
-                $deliveryTjTotal = $delivery_volume * $delivery_tj_rate;
-                $boxTotal = $purchase_price * $box_qty + $deliveryCnTotal + $deliveryTjTotal;
-                $unitCost = $units > 0 && $box_qty > 0 ? $boxTotal / ($units * $box_qty) : 0;
-            @endphp
+    $selectedProduct = collect($products)->firstWhere('id', $product_id);
+    $units = $selectedProduct?->units_per_box ?: 0;
+    $purchasePriceVal = (float) str_replace(',', '.', $purchase_price ?? 0);
+    $deliveryVolumeVal = (float) str_replace(',', '.', $delivery_volume ?? 0);
+    $deliveryCnRateVal = (float) str_replace(',', '.', $delivery_cn_rate ?? 0);
+    $deliveryTjRateVal = (float) str_replace(',', '.', $delivery_tj_rate ?? 0);
+    $boxQtyVal = (int) ($box_qty ?? 0);
+    $deliveryCnTotal = $deliveryVolumeVal * $deliveryCnRateVal;
+    $deliveryTjTotal = $deliveryVolumeVal * $deliveryTjRateVal;
+    $boxTotal = $purchasePriceVal * $boxQtyVal + $deliveryCnTotal + $deliveryTjTotal;
+    $unitCost = $units > 0 && $boxQtyVal > 0 ? $boxTotal / ($units * $boxQtyVal) : 0;
+@endphp
 
+            @php
+                $fmt = fn ($number, $decimals = 6) => rtrim(rtrim(number_format($number, $decimals, '.', ''), '0'), '.');
+            @endphp
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 rounded-xl p-4">
                 <div class="text-sm text-gray-600">
                     <div class="font-semibold text-gray-900">{{ __('Коробка: сумма, $') }}</div>
-                    <div class="text-lg font-semibold text-gray-900">{{ number_format($boxTotal, 2) }}</div>
+                    <div class="text-lg font-semibold text-gray-900">{{ $fmt($boxTotal) }}</div>
                     <div class="text-xs text-gray-500 mt-1">{{ __('Цена + доставка Китай + доставка Таджикистан') }}
                     </div>
                 </div>
                 <div class="text-sm text-gray-600">
                     <div class="font-semibold text-gray-900">{{ __('Себестоимость за 1 шт, $') }}</div>
-                    <div class="text-lg font-semibold text-blue-600">{{ number_format($unitCost, 4) }}</div>
+                    <div class="text-lg font-semibold text-blue-600">{{ $fmt($unitCost) }}</div>
                     <div class="text-xs text-gray-500 mt-1">
                         {{ __('Рассчитано на основе количества в коробке:') }}
                         <span class="font-semibold">{{ $units ?: '—' }}</span>

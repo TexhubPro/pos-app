@@ -149,7 +149,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="space-y-1.5">
                     <x-ui::label for="quantity">{{ __('Количество') }}</x-ui::label>
-                    <x-ui::input id="quantity" type="number" min="0" wire:model.defer="quantity"
+                    <x-ui::input id="quantity" type="number" min="0" wire:model.live="quantity"
                         placeholder="0" :error="$errors->first('quantity')" />
                 </div>
                 <div class="space-y-1.5">
@@ -182,13 +182,13 @@
                 </div>
                 <div class="space-y-1.5">
                     <x-ui::label for="box_count">{{ __('Коробок в наличии') }}</x-ui::label>
-                    <x-ui::input id="box_count" type="number" min="0" wire:model.debounce.2000ms="box_count"
-                        placeholder="0" :error="$errors->first('box_count')" />
+                    <x-ui::input id="box_count" type="number" min="0"
+                        wire:model.live.debounce.2000ms="box_count" placeholder="0" :error="$errors->first('box_count')" />
                 </div>
                 <div class="space-y-1.5">
                     <x-ui::label for="units_per_box">{{ __('Штук в коробке') }}</x-ui::label>
-                    <x-ui::input id="units_per_box" type="number" min="0" wire:model.debounce.2000ms="units_per_box"
-                        placeholder="0" :error="$errors->first('units_per_box')" />
+                    <x-ui::input id="units_per_box" type="number" min="0"
+                        wire:model.live.debounce.2000ms="units_per_box" placeholder="0" :error="$errors->first('units_per_box')" />
                 </div>
             </div>
             <div class="flex items-center justify-end gap-3 pt-2">

@@ -57,11 +57,14 @@
                     wire:click="sortBy('units_per_box')">
                     {{ __('Шт. в коробке') }}
                 </th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
                     {{ __('Категория') }}</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
                     {{ __('Штрих-код') }}</th>
-                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide w-40 whitespace-nowrap">
+                <th
+                    class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide w-40 whitespace-nowrap">
                     {{ __('Действия') }}</th>
             </tr>
         </x-slot:head>
@@ -77,15 +80,16 @@
                         @else
                             <svg class="size-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M3 7l5 5-5 5h18l-5-5 5-5z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 7l5 5-5 5h18l-5-5 5-5z" />
                             </svg>
                         @endif
                     </span>
-                    <span class="whitespace-nowrap">{{ $product->name }}</span>
+                    <span class="whitespace-nowrap">{{ $product->category->name . ' - ' . $product->name }}</span>
                 </td>
-                <td class="px-4 py-3 text-sm font-semibold text-gray-800 whitespace-nowrap">{{ $product->quantity }}</td>
-                <td class="px-4 py-3 text-sm font-semibold text-gray-800 whitespace-nowrap">{{ $product->box_count }}</td>
+                <td class="px-4 py-3 text-sm font-semibold text-gray-800 whitespace-nowrap">{{ $product->quantity }}
+                </td>
+                <td class="px-4 py-3 text-sm font-semibold text-gray-800 whitespace-nowrap">{{ $product->box_count }}
+                </td>
                 <td class="px-4 py-3 text-sm font-semibold text-gray-800 whitespace-nowrap">
                     {{ $product->units_per_box }}</td>
                 <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">

@@ -26,7 +26,8 @@
                         class="h-12 w-full rounded-xl bg-white border border-gray-200 px-3 text-base font-semibold text-gray-800 focus:outline-2 focus:outline-blue-600">
                         <option value="">{{ __('Выберите клиента') }}</option>
                         @foreach ($clients as $client)
-                            <option value="{{ $client->id }}">{{ $client->name }} ({{ $client->phone }})</option>
+                            <option value="{{ $client->id }}">{{ $product->category->name . ' - ' . $client->name }}
+                                ({{ $client->phone }})</option>
                         @endforeach
                     </select>
                     @error('client_id')
@@ -96,7 +97,8 @@
                 <div class="space-y-1.5">
                     <x-ui::label for="cash_amount">{{ __('Наличными, $') }}</x-ui::label>
                     <x-ui::input id="cash_amount" type="text" inputmode="decimal"
-                        wire:model.live.debounce.2000ms="cash_amount" placeholder="{{ __('Сколько клиент дал наличными') }}" />
+                        wire:model.live.debounce.2000ms="cash_amount"
+                        placeholder="{{ __('Сколько клиент дал наличными') }}" />
                 </div>
                 <div class="space-y-1.5">
                     <x-ui::label for="debt_amount">{{ __('В долг, $') }}</x-ui::label>

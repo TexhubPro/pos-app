@@ -46,6 +46,7 @@ class Create extends Component
 
     public function submit(): void
     {
+        session()->forget('sale_error');
         $this->sanitizeNumericFields();
         $this->validate();
 

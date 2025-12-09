@@ -16,6 +16,9 @@
     @if (session('sale_error'))
         <x-ui::alert type="danger" :messages="[session('sale_error')]" />
     @endif
+    @error('quantity')
+        <x-ui::alert type="danger" :messages="[$message]" />
+    @enderror
 
     <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm space-y-4">
         <form class="space-y-4" wire:submit.prevent="submit">

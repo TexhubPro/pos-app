@@ -56,6 +56,28 @@ class Index extends Component
         $this->resetPage();
     }
 
+    public function updated($name, $value): void
+    {
+        $floatFields = [
+            'purchase_price',
+            'delivery_volume',
+            'delivery_cn_rate',
+            'delivery_tj_rate',
+        ];
+
+        if (in_array($name, $floatFields, true)) {
+            $this->$name = $this->sanitizeFloat($value);
+        }
+    }
+
+    protected function sanitizeFloat($value): float
+    {
+        if (is_string($value)) {
+            $value = str_replace(',', '.', $value);
+        }
+        return (float) $value;
+    }
+
     protected function rules(): array
     {
         return [

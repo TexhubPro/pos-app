@@ -69,15 +69,18 @@ class Create extends Component
             $totalUnits = ($boxQty * $unitsPerBox) + $unitQty;
 
             if ($totalUnits <= 0) {
-                throw new \RuntimeException(__('Нужно указать количество для продажи'));
+                $this->addError('quantity', __('Нужно указать количество для продажи'));
+                return;
             }
             if (($product->quantity ?? 0) < $totalUnits) {
-                throw new \RuntimeException(__('Недостаточно товара на складе'));
+                $this->addError('quantity', __('Недостаточно товара на складе'));
+                return;
             }
 
             $boxesUsed = $boxQty + (int) ceil($unitQty / $unitsPerBox);
             if (($product->box_count ?? 0) < $boxesUsed) {
-                throw new \RuntimeException(__('Недостаточно коробок на складе'));
+                $this->addError('quantity', __('Недостаточно коробок на складе'));
+                return;
             }
 
             $pricePerUnit = (float) ($this->price_unit ?: 0);
@@ -163,6 +166,15 @@ class Create extends Component
         $this->cash_amount = 0;
         $this->debt_amount = 0;
         $this->comment = '';
+    }
+
+    public function updated($name, $value): void
+    {
+        $floatFields = ['price_unit', 'price_box', 'cash_amount'];
+        if (in_array($name, $floatFields, true) && is_string($value)) {
+            $this->$name = (float) str_replace(',', '.', $value);
+            return;
+        }
     }
 
     protected function unitsPerBox(): int

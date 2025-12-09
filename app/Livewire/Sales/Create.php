@@ -60,6 +60,11 @@ class Create extends Component
             $unitsPerBox = max(1, $product->units_per_box ?? 1);
             $unitQty = $unitQtyInput;
 
+            if ($boxQty > 0 && $unitQtyInput === $boxQty * $unitsPerBox) {
+                // unit_qty введён автоматически, не учитываем как доп. шт
+                $unitQty = 0;
+            }
+
             if ($unitQty <= 0 && $boxQty > 0) {
                 $unitQty = $boxQty * $unitsPerBox;
             }
@@ -206,6 +211,10 @@ class Create extends Component
         $unitsPerBox = $this->unitsPerBox();
         $boxQty = (int) ($this->box_qty ?: 0);
         $unitQty = (int) ($this->unit_qty ?: 0);
+
+        if ($boxQty > 0 && $unitQty === $boxQty * $unitsPerBox) {
+            $unitQty = 0;
+        }
 
         if ($unitQty <= 0 && $boxQty > 0) {
             $unitQty = $boxQty * $unitsPerBox;

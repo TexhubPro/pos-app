@@ -56,12 +56,12 @@
                 </div>
                 <div class="space-y-1.5">
                     <x-ui::label for="price_box">{{ __('Цена за коробку, $') }}</x-ui::label>
-                    <x-ui::input id="price_box" type="number" min="0" step="0.01"
+                    <x-ui::input id="price_box" type="text" inputmode="decimal"
                         wire:model.live="price_box" />
                 </div>
                 <div class="space-y-1.5">
                     <x-ui::label for="price_unit">{{ __('Цена за 1 шт, $') }}</x-ui::label>
-                    <x-ui::input id="price_unit" type="number" min="0" step="0.01"
+                    <x-ui::input id="price_unit" type="text" inputmode="decimal"
                         wire:model.live="price_unit" />
                 </div>
             </div>
@@ -92,7 +92,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="space-y-1.5">
                     <x-ui::label for="cash_amount">{{ __('Наличными, $') }}</x-ui::label>
-                    <x-ui::input id="cash_amount" type="number" min="0" step="0.01"
+                    <x-ui::input id="cash_amount" type="text" inputmode="decimal"
                         wire:model.live="cash_amount" placeholder="{{ __('Сколько клиент дал наличными') }}" />
                 </div>
                 <div class="space-y-1.5">

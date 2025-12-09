@@ -13,9 +13,6 @@
     @if (session('status'))
         <x-ui::alert type="success" :messages="[session('status')]" />
     @endif
-    @if (session('sale_error'))
-        <x-ui::alert type="danger" :messages="[session('sale_error')]" />
-    @endif
     @error('quantity')
         <x-ui::alert type="danger" :messages="[$message]" />
     @enderror

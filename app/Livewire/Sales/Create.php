@@ -46,34 +46,18 @@ class Create extends Component
 
     public function submit(): void
     {
-        session()->forget('sale_error');
         $this->sanitizeNumericFields();
         $this->validate();
 
-        $boxQty = (int) ($this->box_qty ?: 0);
-        $unitQtyInput = (int) ($this->unit_qty ?: 0);
-
-        DB::transaction(function () use ($boxQty, $unitQtyInput) {
+        DB::transaction(function () {
             $product = Product::lockForUpdate()->findOrFail($this->product_id);
             $client = Client::lockForUpdate()->findOrFail($this->client_id);
 
-            $unitsPerBox = max(1, $product->units_per_box ?? 1);
-            $unitQty = $unitQtyInput;
-
-            if ($boxQty > 0 && $unitQtyInput === $boxQty * $unitsPerBox) {
-                // unit_qty введён автоматически, не учитываем как доп. шт
-                $unitQty = 0;
-            }
-
-            if ($unitQty <= 0 && $boxQty > 0) {
-                $unitQty = $boxQty * $unitsPerBox;
-            }
-
-            if ($boxQty <= 0 && $unitQty > 0) {
-                $boxQty = (int) ceil($unitQty / $unitsPerBox);
-            }
-
-            $totalUnits = ($boxQty * $unitsPerBox) + $unitQty;
+            $totals = $this->calculateTotals();
+            $boxQty = $totals['boxQty'];
+            $unitQty = $totals['unitQty'];
+            $unitsPerBox = $totals['unitsPerBox'];
+            $totalUnits = $totals['totalUnits'];
 
             if ($totalUnits <= 0) {
                 $this->flashQuantityError(__('Нужно указать количество для продажи'));
@@ -331,7 +315,6 @@ class Create extends Component
     protected function flashQuantityError(string $message): void
     {
         $this->addError('quantity', $message);
-        session()->flash('sale_error', $message);
     }
 
     #[Layout('components.layouts.dashboard')]

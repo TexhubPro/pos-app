@@ -5,9 +5,9 @@
 ])
 
 @if ($show)
-    <div class="fixed inset-0 z-50 flex items-center justify-center px-4 w-screen h-screen overflow-hidden">
+    <div class="fixed inset-0 z-50 flex items-center justify-center px-4">
         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" wire:click="{{ $closeAction }}"></div>
-        <div class="relative w-full rounded-xl bg-white shadow-2xl ring-1 ring-gray-100 p-6 space-y-4 h-[70vh]">
+        <div class="relative w-full max-w-4xl rounded-xl bg-white shadow-2xl ring-1 ring-gray-100 p-6 space-y-4">
             <div class="flex items-center justify-between">
                 <p class="text-lg font-semibold text-gray-900">{{ $title }}</p>
                 <button type="button" class="text-gray-400 hover:text-gray-600" wire:click="{{ $closeAction }}">
@@ -18,8 +18,8 @@
                 </button>
             </div>
             <div class="relative">
-                <div class="space-y-4 h-[calc(100vh-290px)] overflow-hidden">
-                    <div class="overflow-hidden h-96">
+                <div class="space-y-4 h-[60vh] overflow-hidden p-0">
+                    <div class="overflow-hidden">
                         {{ $slot }}
                     </div>
 

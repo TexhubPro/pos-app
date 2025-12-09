@@ -19,7 +19,7 @@
                 </button>
             </div>
             <div class="space-y-4 relative max-h-[50vh] sm:max-h-[60vh] overflow-hidden pr-1">
-                <div class="h-full overflow-y-scroll">
+                <div class="overflow-y-scroll h-96">
                     {{ $slot }}
                 </div>
             </div>

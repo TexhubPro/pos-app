@@ -56,20 +56,6 @@ class Index extends Component
         $this->resetPage();
     }
 
-    public function updated($name, $value): void
-    {
-        $floatFields = [
-            'purchase_price',
-            'delivery_volume',
-            'delivery_cn_rate',
-            'delivery_tj_rate',
-        ];
-
-        if (in_array($name, $floatFields, true)) {
-            $this->$name = $this->sanitizeFloat($value);
-        }
-    }
-
     protected function prepareNumericFields(): void
     {
         $this->purchase_price = $this->sanitizeFloat($this->purchase_price);

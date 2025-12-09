@@ -18,8 +18,10 @@
                     </svg>
                 </button>
             </div>
-            <div class="space-y-4 relative h-[50vh] lg:h-[60vh] overflow-y-auto pr-1">
-                {{ $slot }}
+            <div class="space-y-4 relative max-h-[50vh] sm:max-h-[60vh] overflow-hidden pr-1">
+                <div class="h-full overflow-y-scroll">
+                    {{ $slot }}
+                </div>
             </div>
         </div>
     </div>

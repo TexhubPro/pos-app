@@ -13,6 +13,9 @@
     @if (session('status'))
         <x-ui::alert type="success" :messages="[session('status')]" />
     @endif
+    @if (session('sale_error'))
+        <x-ui::alert type="danger" :messages="[session('sale_error')]" />
+    @endif
 
     <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm space-y-4">
         <form class="space-y-4" wire:submit.prevent="submit">
@@ -57,12 +60,12 @@
                 <div class="space-y-1.5">
                     <x-ui::label for="price_box">{{ __('Цена за коробку, $') }}</x-ui::label>
                     <x-ui::input id="price_box" type="text" inputmode="decimal"
-                        wire:model.live="price_box" />
+                        wire:model.live.debounce.2000ms="price_box" />
                 </div>
                 <div class="space-y-1.5">
                     <x-ui::label for="price_unit">{{ __('Цена за 1 шт, $') }}</x-ui::label>
                     <x-ui::input id="price_unit" type="text" inputmode="decimal"
-                        wire:model.live="price_unit" />
+                        wire:model.live.debounce.2000ms="price_unit" />
                 </div>
             </div>
 
@@ -93,7 +96,7 @@
                 <div class="space-y-1.5">
                     <x-ui::label for="cash_amount">{{ __('Наличными, $') }}</x-ui::label>
                     <x-ui::input id="cash_amount" type="text" inputmode="decimal"
-                        wire:model.live="cash_amount" placeholder="{{ __('Сколько клиент дал наличными') }}" />
+                        wire:model.live.debounce.2000ms="cash_amount" placeholder="{{ __('Сколько клиент дал наличными') }}" />
                 </div>
                 <div class="space-y-1.5">
                     <x-ui::label for="debt_amount">{{ __('В долг, $') }}</x-ui::label>
@@ -113,15 +116,17 @@
             @php
                 $selectedProduct = collect($products)->firstWhere('id', $product_id);
                 $unitsPerBox = $selectedProduct?->units_per_box ?: 1;
+                $priceBoxSanitized = (float) str_replace(',', '.', $price_box ?? 0);
+                $priceUnitSanitized = (float) str_replace(',', '.', $price_unit ?? 0);
                 $unitsFromBoxes = ($box_qty ?: 0) * $unitsPerBox;
                 $totalUnits = max(0, $unitsFromBoxes + ($unit_qty ?: 0));
                 $unitPrice =
-                    $price_unit > 0
-                        ? $price_unit
-                        : (($price_box ?? 0) > 0 && $unitsPerBox > 0
-                            ? $price_box / $unitsPerBox
+                    $priceUnitSanitized > 0
+                        ? $priceUnitSanitized
+                        : ($priceBoxSanitized > 0 && $unitsPerBox > 0
+                            ? $priceBoxSanitized / $unitsPerBox
                             : 0);
-                $boxPrice = $price_box > 0 ? $price_box : $unitPrice * $unitsPerBox;
+                $boxPrice = $priceBoxSanitized > 0 ? $priceBoxSanitized : $unitPrice * $unitsPerBox;
                 $totalPrice = $unitPrice * $totalUnits;
             @endphp
 

@@ -238,9 +238,13 @@
 @php
     $selectedProduct = collect($products)->firstWhere('id', $product_id);
     $units = $selectedProduct?->units_per_box ?: 0;
-    $deliveryCnTotal = $delivery_volume * $delivery_cn_rate;
-    $deliveryTjTotal = $delivery_volume * $delivery_tj_rate;
-    $boxTotal = $purchase_price * $box_qty + $deliveryCnTotal + $deliveryTjTotal;
+    $purchasePriceSanitized = (float) str_replace(',', '.', $purchase_price ?? 0);
+    $deliveryVolumeSanitized = (float) str_replace(',', '.', $delivery_volume ?? 0);
+    $deliveryCnRateSanitized = (float) str_replace(',', '.', $delivery_cn_rate ?? 0);
+    $deliveryTjRateSanitized = (float) str_replace(',', '.', $delivery_tj_rate ?? 0);
+    $deliveryCnTotal = $deliveryVolumeSanitized * $deliveryCnRateSanitized;
+    $deliveryTjTotal = $deliveryVolumeSanitized * $deliveryTjRateSanitized;
+    $boxTotal = $purchasePriceSanitized * $box_qty + $deliveryCnTotal + $deliveryTjTotal;
     $unitCost = $units > 0 && $box_qty > 0 ? $boxTotal / ($units * $box_qty) : 0;
 @endphp
 

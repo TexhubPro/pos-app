@@ -46,6 +46,7 @@ class Create extends Component
 
     public function submit(): void
     {
+        $this->sanitizeNumericFields();
         $this->validate();
 
         $boxQty = (int) ($this->box_qty ?: 0);
@@ -69,17 +70,17 @@ class Create extends Component
             $totalUnits = ($boxQty * $unitsPerBox) + $unitQty;
 
             if ($totalUnits <= 0) {
-                $this->addError('quantity', __('Нужно указать количество для продажи'));
+                $this->flashQuantityError(__('Нужно указать количество для продажи'));
                 return;
             }
             if (($product->quantity ?? 0) < $totalUnits) {
-                $this->addError('quantity', __('Недостаточно товара на складе'));
+                $this->flashQuantityError(__('Недостаточно товара на складе'));
                 return;
             }
 
             $boxesUsed = $boxQty + (int) ceil($unitQty / $unitsPerBox);
             if (($product->box_count ?? 0) < $boxesUsed) {
-                $this->addError('quantity', __('Недостаточно коробок на складе'));
+                $this->flashQuantityError(__('Недостаточно коробок на складе'));
                 return;
             }
 
@@ -172,9 +173,25 @@ class Create extends Component
     {
         $floatFields = ['price_unit', 'price_box', 'cash_amount'];
         if (in_array($name, $floatFields, true) && is_string($value)) {
-            $this->$name = (float) str_replace(',', '.', $value);
+            $this->$name = $this->toFloat($value);
             return;
         }
+    }
+
+    protected function toFloat($value): float
+    {
+        if (is_string($value)) {
+            $value = str_replace(',', '.', $value);
+        }
+        return is_numeric($value) ? (float) $value : 0.0;
+    }
+
+    protected function sanitizeNumericFields(): void
+    {
+        $this->price_unit = $this->toFloat($this->price_unit);
+        $this->price_box = $this->toFloat($this->price_box);
+        $this->cash_amount = $this->toFloat($this->cash_amount);
+        $this->debt_amount = $this->toFloat($this->debt_amount);
     }
 
     protected function unitsPerBox(): int
@@ -196,8 +213,8 @@ class Create extends Component
             $boxQty = (int) ceil($unitQty / $unitsPerBox);
         }
 
-        $unitPrice = $this->price_unit > 0 ? (float) $this->price_unit : (($this->price_box ?? 0) > 0 && $unitsPerBox > 0 ? (float) $this->price_box / $unitsPerBox : 0);
-        $boxPrice = $this->price_box > 0 ? (float) $this->price_box : $unitPrice * $unitsPerBox;
+        $unitPrice = $this->price_unit > 0 ? $this->toFloat($this->price_unit) : (($this->price_box ?? 0) > 0 && $unitsPerBox > 0 ? $this->toFloat($this->price_box) / $unitsPerBox : 0);
+        $boxPrice = $this->price_box > 0 ? $this->toFloat($this->price_box) : $unitPrice * $unitsPerBox;
 
         $totalUnits = ($boxQty * $unitsPerBox) + $unitQty;
         $totalPrice = $unitPrice * $totalUnits;
@@ -268,8 +285,9 @@ class Create extends Component
         }
         $this->syncing = true;
         $unitsPerBox = $this->unitsPerBox();
-        if ($value > 0 && $unitsPerBox > 0) {
-            $this->price_unit = $value / $unitsPerBox;
+        $price = $this->toFloat($value);
+        if ($price > 0 && $unitsPerBox > 0) {
+            $this->price_unit = $price / $unitsPerBox;
         }
         $this->syncing = false;
         $this->syncDebtFromCash();
@@ -282,8 +300,9 @@ class Create extends Component
         }
         $this->syncing = true;
         $unitsPerBox = $this->unitsPerBox();
-        if ($value > 0 && $unitsPerBox > 0) {
-            $this->price_box = $value * $unitsPerBox;
+        $price = $this->toFloat($value);
+        if ($price > 0 && $unitsPerBox > 0) {
+            $this->price_box = $price * $unitsPerBox;
         }
         $this->syncing = false;
         $this->syncDebtFromCash();
@@ -297,6 +316,12 @@ class Create extends Component
     public function updatedPaymentType(): void
     {
         $this->syncDebtFromCash();
+    }
+
+    protected function flashQuantityError(string $message): void
+    {
+        $this->addError('quantity', $message);
+        session()->flash('sale_error', $message);
     }
 
     #[Layout('components.layouts.dashboard')]

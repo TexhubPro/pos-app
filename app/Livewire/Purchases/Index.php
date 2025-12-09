@@ -70,6 +70,15 @@ class Index extends Component
         }
     }
 
+    protected function prepareNumericFields(): void
+    {
+        $this->purchase_price = $this->sanitizeFloat($this->purchase_price);
+        $this->delivery_volume = $this->sanitizeFloat($this->delivery_volume);
+        $this->delivery_cn_rate = $this->sanitizeFloat($this->delivery_cn_rate);
+        $this->delivery_tj_rate = $this->sanitizeFloat($this->delivery_tj_rate);
+        $this->box_qty = (int) $this->box_qty;
+    }
+
     protected function sanitizeFloat($value): float
     {
         if (is_string($value)) {
@@ -117,6 +126,7 @@ class Index extends Component
 
     public function save(): void
     {
+        $this->prepareNumericFields();
         $this->validate();
 
         DB::transaction(function () use (&$purchase) {

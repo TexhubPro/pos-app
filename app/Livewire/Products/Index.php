@@ -44,6 +44,18 @@ class Index extends Component
         $this->resetPage();
     }
 
+    public function updated($name, $value): void
+    {
+        if (in_array($name, ['box_count', 'units_per_box'], true)) {
+            $boxes = max(0, (int) $this->box_count);
+            $units = max(0, (int) $this->units_per_box);
+            $autoQuantity = $boxes * $units;
+            if ($autoQuantity > 0) {
+                $this->quantity = $autoQuantity;
+            }
+        }
+    }
+
     protected function rules(): array
     {
         return [

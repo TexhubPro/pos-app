@@ -52,13 +52,17 @@
                 <th
                     class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
                     {{ __('Фирма') }}</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
                     {{ __('Цена за К/р, $') }}</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
                     {{ __('К/р') }}</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
                     {{ __('Осталось К/р') }}</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
                     {{ __('Сумма товара, $') }}</th>
                 <th
                     class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
@@ -66,7 +70,8 @@
                 <th
                     class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
                     {{ __('Дост. Тадж., $') }}</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
                     {{ __('Итого с дост., $') }}</th>
                 <th
                     class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
@@ -89,7 +94,8 @@
                     {{ $purchase->created_at->format('d.m.Y') }}
                 </td>
                 <td class="px-4 py-3 text-sm font-semibold text-gray-800 whitespace-nowrap max-w-[13rem]">
-                    <span class="truncate block">{{ $purchase->product?->name ?? '—' }}</span>
+                    <span
+                        class="truncate block">{{ $purchase->product->category->name ?? ('' . $purchase->product?->name ?? '—') }}</span>
                 </td>
                 <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap max-w-[13rem]">
                     <span class="truncate block">{{ $purchase->firm?->name ?? '—' }}</span>
@@ -100,7 +106,8 @@
                 <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
                     {{ $purchase->box_qty ?? 1 }}
                 </td>
-                <td class="px-4 py-3 text-sm font-semibold {{ $remaining > 0 ? 'text-amber-600' : 'text-green-600' }} whitespace-nowrap">
+                <td
+                    class="px-4 py-3 text-sm font-semibold {{ $remaining > 0 ? 'text-amber-600' : 'text-green-600' }} whitespace-nowrap">
                     {{ $remaining }}
                 </td>
                 <td class="px-4 py-3 text-sm font-semibold text-gray-800 whitespace-nowrap">
@@ -210,7 +217,8 @@
                     <div class="space-y-1.5">
                         <x-ui::label for="delivery_volume">{{ __('Объём, куб') }}</x-ui::label>
                         <x-ui::input id="delivery_volume" type="text" inputmode="decimal"
-                            wire:model.live.debounce.2000ms="delivery_volume" :error="$errors->first('delivery_volume')" placeholder="{{ __('Куб') }}" />
+                            wire:model.live.debounce.2000ms="delivery_volume" :error="$errors->first('delivery_volume')"
+                            placeholder="{{ __('Куб') }}" />
                     </div>
                     <div class="space-y-1.5">
                         <x-ui::label for="delivery_cn_rate">{{ __('Китай: цена за куб, $') }}</x-ui::label>
@@ -235,18 +243,18 @@
                 </div>
             </div>
 
-@php
-    $selectedProduct = collect($products)->firstWhere('id', $product_id);
-    $units = $selectedProduct?->units_per_box ?: 0;
-    $purchasePriceSanitized = (float) str_replace(',', '.', $purchase_price ?? 0);
-    $deliveryVolumeSanitized = (float) str_replace(',', '.', $delivery_volume ?? 0);
-    $deliveryCnRateSanitized = (float) str_replace(',', '.', $delivery_cn_rate ?? 0);
-    $deliveryTjRateSanitized = (float) str_replace(',', '.', $delivery_tj_rate ?? 0);
-    $deliveryCnTotal = $deliveryVolumeSanitized * $deliveryCnRateSanitized;
-    $deliveryTjTotal = $deliveryVolumeSanitized * $deliveryTjRateSanitized;
-    $boxTotal = $purchasePriceSanitized * $box_qty + $deliveryCnTotal + $deliveryTjTotal;
-    $unitCost = $units > 0 && $box_qty > 0 ? $boxTotal / ($units * $box_qty) : 0;
-@endphp
+            @php
+                $selectedProduct = collect($products)->firstWhere('id', $product_id);
+                $units = $selectedProduct?->units_per_box ?: 0;
+                $purchasePriceSanitized = (float) str_replace(',', '.', $purchase_price ?? 0);
+                $deliveryVolumeSanitized = (float) str_replace(',', '.', $delivery_volume ?? 0);
+                $deliveryCnRateSanitized = (float) str_replace(',', '.', $delivery_cn_rate ?? 0);
+                $deliveryTjRateSanitized = (float) str_replace(',', '.', $delivery_tj_rate ?? 0);
+                $deliveryCnTotal = $deliveryVolumeSanitized * $deliveryCnRateSanitized;
+                $deliveryTjTotal = $deliveryVolumeSanitized * $deliveryTjRateSanitized;
+                $boxTotal = $purchasePriceSanitized * $box_qty + $deliveryCnTotal + $deliveryTjTotal;
+                $unitCost = $units > 0 && $box_qty > 0 ? $boxTotal / ($units * $box_qty) : 0;
+            @endphp
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 rounded-xl p-4">
                 <div class="text-sm text-gray-600">

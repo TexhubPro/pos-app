@@ -8,7 +8,9 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('purchases', function (Blueprint $table) {
-            $table->integer('received_box_qty')->default(0)->after('box_qty');
+            if (!Schema::hasColumn('purchases', 'received_box_qty')) {
+                $table->integer('received_box_qty')->default(0);
+            }
         });
     }
 

@@ -20,6 +20,11 @@
                 <p class="text-sm font-semibold text-gray-600">{{ __('Долг клиентов перед нами') }}</p>
                 <p class="text-2xl font-bold text-gray-900">${{ number_format($this->clientDebt, 2) }}</p>
             </div>
+            <div
+                class="bg-white border border-gray-200 rounded-2xl px-6 py-4 shadow-sm flex flex-col gap-1 min-w-[220px]">
+                <p class="text-sm font-semibold text-gray-600">{{ __('Чистая прибыль (всего)') }}</p>
+                <p class="text-2xl font-bold text-emerald-600">${{ number_format($this->totalProfit, 2, '.', ' ') }}</p>
+            </div>
         </div>
     </div>
 

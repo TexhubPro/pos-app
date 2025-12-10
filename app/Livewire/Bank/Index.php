@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\ClientPayment;
 use App\Models\Firm;
 use App\Models\FirmPayment;
+use App\Models\Sale;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -49,6 +50,18 @@ class Index extends Component
     public function getClientDebtProperty(): float
     {
         return (float) (Client::sum('debt') ?? 0);
+    }
+
+    public function getTotalProfitProperty(): float
+    {
+        // Прибыль = выручка - (себестоимость * проданные единицы)
+        $sales = Sale::with('product')->get();
+        $profit = 0.0;
+        foreach ($sales as $sale) {
+            $costPerUnit = (float) ($sale->product?->purchases()->latest()->value('cost_per_unit') ?? 0);
+            $profit += ($sale->total_price ?? 0) - $costPerUnit * ($sale->total_units ?? 0);
+        }
+        return $profit;
     }
 
     public function addDeposit(): void

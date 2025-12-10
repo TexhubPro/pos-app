@@ -5,6 +5,9 @@ namespace App\Livewire\Sales;
 use App\Models\Client;
 use App\Models\ClientPayment;
 use App\Models\Product;
+use App\Models\Purchase;
+use App\Models\PurchaseReceipt;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Sale;
 use App\Models\BankTransaction;
 use Livewire\Attributes\Layout;
@@ -59,6 +62,12 @@ class Create extends Component
             $unitQty = $totals['unitQty'];
             $unitsPerBox = $totals['unitsPerBox'];
             $totalUnits = $totals['totalUnits'];
+
+            if (($product->quantity ?? 0) < $totalUnits) {
+                $missingUnits = $totalUnits - ($product->quantity ?? 0);
+                $this->autoReceiveFromPurchases($product, $missingUnits, $unitsPerBox);
+                $product->refresh();
+            }
 
             if ($totalUnits <= 0) {
                 $this->flashQuantityError(__('Нужно указать количество для продажи'));
@@ -183,6 +192,54 @@ class Create extends Component
         $this->price_box = $this->toFloat($this->price_box);
         $this->cash_amount = $this->toFloat($this->cash_amount);
         $this->debt_amount = $this->toFloat($this->debt_amount);
+    }
+
+    protected function autoReceiveFromPurchases(Product $product, int $missingUnits, int $unitsPerBox): void
+    {
+        if ($missingUnits <= 0 || $unitsPerBox <= 0) {
+            return;
+        }
+
+        $neededBoxes = (int) ceil($missingUnits / $unitsPerBox);
+        $boxesAdded = 0;
+
+        $purchases = Purchase::with('receipts')
+            ->where('product_id', $product->id)
+            ->orderBy('created_at')
+            ->get();
+
+        foreach ($purchases as $purchase) {
+            $received = $purchase->receipts->sum('box_qty');
+            $remaining = max(0, ($purchase->box_qty ?? 0) - $received);
+            if ($remaining <= 0) {
+                continue;
+            }
+
+            $take = min($remaining, $neededBoxes - $boxesAdded);
+            if ($take <= 0) {
+                break;
+            }
+
+            PurchaseReceipt::create([
+                'purchase_id' => $purchase->id,
+                'box_qty' => $take,
+                'user_id' => Auth::id(),
+            ]);
+
+            $purchase->received_box_qty = ($purchase->received_box_qty ?? 0) + $take;
+            $purchase->save();
+
+            $boxesAdded += $take;
+            if ($boxesAdded >= $neededBoxes) {
+                break;
+            }
+        }
+
+        if ($boxesAdded > 0) {
+            $product->box_count = ($product->box_count ?? 0) + $boxesAdded;
+            $product->quantity = ($product->quantity ?? 0) + ($boxesAdded * $unitsPerBox);
+            $product->save();
+        }
     }
 
     protected function unitsPerBox(): int

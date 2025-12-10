@@ -71,6 +71,45 @@
                 </div>
             </div>
 
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <p class="text-lg font-semibold text-gray-900">{{ __('Сегодня: чистая прибыль от продаж') }}</p>
+                        <span class="text-xs font-semibold text-gray-500">{{ __('Себестоимость учтена') }}</span>
+                    </div>
+                    <p class="text-3xl font-bold text-emerald-600">{{ number_format($today['profit'] ?? 0, 2, '.', ' ') }} $</p>
+                    <div class="h-36 flex items-end gap-2" aria-hidden="true">
+                        @php
+                            $maxProfit = max(1, collect($profitSeries)->max('value'));
+                        @endphp
+                        @foreach ($profitSeries as $point)
+                            @php
+                                $height = ($point['value'] / $maxProfit) * 100;
+                            @endphp
+                            <div class="flex-1 flex flex-col items-center">
+                                <div class="w-full rounded-md bg-emerald-200 relative" style="height: {{ $height }}%;">
+                                    <div class="absolute inset-0 rounded-md bg-gradient-to-t from-emerald-500/80 to-emerald-400/60"></div>
+                                </div>
+                                <span class="mt-1 text-[10px] text-gray-500">{{ $point['label'] }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 space-y-2">
+                    <p class="text-lg font-semibold text-gray-900">{{ __('За 7 дней (прибыль)') }}</p>
+                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
+                        @foreach ($profitSeries as $point)
+                            <div class="flex justify-between bg-gray-50 rounded-lg px-3 py-2">
+                                <span class="font-semibold text-gray-800">{{ $point['label'] }}</span>
+                                <span class="font-semibold {{ $point['value'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
+                                    {{ number_format($point['value'], 2, '.', ' ') }} $
+                                </span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div class="col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm p-4 space-y-3">
                     <div class="flex items-center justify-between">

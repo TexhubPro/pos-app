@@ -61,6 +61,15 @@
                     <div><span class="text-gray-500">{{ __('Создан:') }}</span>
                         <span class="font-semibold text-gray-900">{{ $product->created_at->format('d.m.Y') }}</span>
                     </div>
+                    @php
+                        $lastCost = $product->purchases()->latest()->value('cost_per_unit') ?? 0;
+                        $profitAll = $product->sales->sum(function ($sale) use ($lastCost) {
+                            return ($sale->total_price ?? 0) - $lastCost * ($sale->total_units ?? 0);
+                        });
+                    @endphp
+                    <div><span class="text-gray-500">{{ __('Чистая прибыль (продажи)') }}:</span>
+                        <span class="font-semibold text-emerald-600">{{ number_format($profitAll, 2, '.', ' ') }} $</span>
+                    </div>
                 </div>
             </div>
         </div>

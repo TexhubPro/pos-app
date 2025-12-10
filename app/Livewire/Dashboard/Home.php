@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\DB;
 
 class Home extends Component
 {
+    protected array $costCache = [];
+
     #[Layout('components.layouts.dashboard')]
     public function render()
     {
@@ -39,11 +41,13 @@ class Home extends Component
             $data[$key] = $this->collectMetrics($tf['start'], Carbon::now());
         }
         $today = $this->collectMetrics(Carbon::now()->startOfDay(), Carbon::now());
+        $profitSeries = $this->profitSeries(7);
 
         return view('livewire.dashboard.home', [
             'timeframes' => $labels,
             'data' => $data,
             'today' => $today,
+            'profitSeries' => $profitSeries,
         ]);
     }
 
@@ -57,6 +61,7 @@ class Home extends Component
         $revenue = (float) $sales->clone()->sum('total_price');
         $salesCount = (int) $sales->clone()->count();
         $unitsSold = (int) $sales->clone()->sum('total_units');
+        $profit = $this->profitForPeriod($from, $to);
         $purchasesSum = (float) $purchases->clone()->sum(DB::raw('(purchase_price * COALESCE(box_qty,1)) + COALESCE(delivery_cn,0) + COALESCE(delivery_tj,0)'));
         $deliverySum = (float) $purchases->clone()->sum(DB::raw('COALESCE(delivery_cn,0) + COALESCE(delivery_tj,0)'));
         $expensesSum = (float) $expenses->sum('amount');
@@ -110,6 +115,7 @@ class Home extends Component
             'delivery' => $deliverySum,
             'salesCount' => $salesCount,
             'unitsSold' => $unitsSold,
+            'profit' => $profit,
             'expenses' => $expensesSum,
             'deposits' => $depositsSum,
             'net' => $net,
@@ -141,5 +147,50 @@ class Home extends Component
         // Normalize to 100 max for display
         $max = max($chart) ?: 1;
         return array_map(fn($v) => round(($v / $max) * 100), $chart);
+    }
+
+    protected function profitForPeriod(Carbon $from, Carbon $to): float
+    {
+        $sales = Sale::with('product.purchases')
+            ->whereBetween('created_at', [$from, $to])
+            ->get();
+
+        $profit = 0.0;
+        foreach ($sales as $sale) {
+            $cost = $this->costPerUnit($sale->product_id);
+            $profit += ($sale->total_price ?? 0) - $cost * ($sale->total_units ?? 0);
+        }
+        return $profit;
+    }
+
+    protected function costPerUnit(?int $productId): float
+    {
+        if (!$productId) {
+            return 0.0;
+        }
+        if (array_key_exists($productId, $this->costCache)) {
+            return $this->costCache[$productId];
+        }
+        $cost = Purchase::where('product_id', $productId)
+            ->orderByDesc('created_at')
+            ->value('cost_per_unit') ?? 0;
+        $this->costCache[$productId] = (float) $cost;
+        return (float) $cost;
+    }
+
+    protected function profitSeries(int $days): array
+    {
+        $series = [];
+        $cursor = Carbon::now()->startOfDay()->subDays($days - 1);
+        for ($i = 0; $i < $days; $i++) {
+            $from = $cursor->copy();
+            $to = $cursor->copy()->endOfDay();
+            $series[] = [
+                'label' => $from->format('d.m'),
+                'value' => $this->profitForPeriod($from, $to),
+            ];
+            $cursor->addDay();
+        }
+        return $series;
     }
 }

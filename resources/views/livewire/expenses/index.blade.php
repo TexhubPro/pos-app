@@ -27,13 +27,10 @@
                     <select id="source" wire:model="source"
                         class="h-12 w-full rounded-xl bg-white border border-gray-200 px-3 text-base font-semibold text-gray-800 focus:outline-2 focus:outline-blue-600">
                         <option value="">{{ __('Выберите категорию') }}</option>
-                        <option value="rent">{{ __('Аренда') }}</option>
-                        <option value="salary">{{ __('Зарплата') }}</option>
-                        <option value="logistics">{{ __('Логистика / доставка') }}</option>
-                        <option value="tax">{{ __('Налоги и сборы') }}</option>
-                        <option value="inventory">{{ __('Закупка материалов') }}</option>
-                        <option value="marketing">{{ __('Маркетинг') }}</option>
-                        <option value="services">{{ __('Услуги / подписки') }}</option>
+                        <option value="salary_loader">{{ __('Зарплата грузчика') }}</option>
+                        <option value="defect">{{ __('Бракованные товары') }}</option>
+                        <option value="delivery">{{ __('Доставка') }}</option>
+                        <option value="discount">{{ __('Скидка') }}</option>
                         <option value="other">{{ __('Прочее') }}</option>
                     </select>
                     @if ($errors->first('source'))
@@ -103,13 +100,10 @@
                     'alif' => 'Alif',
                 ];
                 $categoryLabels = [
-                    'rent' => __('Аренда'),
-                    'salary' => __('Зарплата'),
-                    'logistics' => __('Логистика / доставка'),
-                    'tax' => __('Налоги и сборы'),
-                    'inventory' => __('Закупка материалов'),
-                    'marketing' => __('Маркетинг'),
-                    'services' => __('Услуги / подписки'),
+                    'salary_loader' => __('Зарплата грузчика'),
+                    'defect' => __('Бракованные товары'),
+                    'delivery' => __('Доставка'),
+                    'discount' => __('Скидка'),
                     'other' => __('Прочее'),
                 ];
             @endphp

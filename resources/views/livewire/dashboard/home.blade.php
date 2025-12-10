@@ -40,6 +40,37 @@
                 </div>
             </div>
 
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                <div class="stat-card bg-white border border-gray-200 text-gray-900">
+                    <p class="text-sm font-semibold text-gray-600">{{ __('Сегодня: выручка') }}</p>
+                    <p class="text-2xl font-bold text-blue-600">
+                        {{ number_format($today['revenue'], 2, '.', ' ') }} $
+                    </p>
+                    <span class="text-xs text-gray-500">{{ __('Сделок') }}: {{ $today['salesCount'] }}</span>
+                </div>
+                <div class="stat-card bg-white border border-gray-200 text-gray-900">
+                    <p class="text-sm font-semibold text-gray-600">{{ __('Сегодня: продажи шт') }}</p>
+                    <p class="text-2xl font-bold">
+                        {{ number_format($today['unitsSold'] ?? 0, 0, '.', ' ') }}
+                    </p>
+                    <span class="text-xs text-gray-500">{{ __('Товаров продано') }}</span>
+                </div>
+                <div class="stat-card bg-white border border-gray-200 text-gray-900">
+                    <p class="text-sm font-semibold text-gray-600">{{ __('Сегодня: расходы') }}</p>
+                    <p class="text-2xl font-bold text-red-600">
+                        {{ number_format($today['expenses'], 2, '.', ' ') }} $
+                    </p>
+                    <span class="text-xs text-gray-500">{{ __('Включая закупки') }}: {{ number_format($today['purchases'], 2, '.', ' ') }} $</span>
+                </div>
+                <div class="stat-card bg-gradient-to-br from-emerald-500 to-emerald-400 text-white">
+                    <p class="text-sm font-semibold opacity-90">{{ __('Сегодня: итог') }}</p>
+                    <p class="text-3xl font-bold leading-tight">
+                        {{ number_format($today['net'], 2, '.', ' ') }} $
+                    </p>
+                    <span class="text-xs opacity-90">{{ __('Выручка - расходы - закупки') }}</span>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div class="col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm p-4 space-y-3">
                     <div class="flex items-center justify-between">

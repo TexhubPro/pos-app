@@ -38,10 +38,12 @@ class Home extends Component
         foreach ($timeframes as $key => $tf) {
             $data[$key] = $this->collectMetrics($tf['start'], Carbon::now());
         }
+        $today = $this->collectMetrics(Carbon::now()->startOfDay(), Carbon::now());
 
         return view('livewire.dashboard.home', [
             'timeframes' => $labels,
             'data' => $data,
+            'today' => $today,
         ]);
     }
 
@@ -54,6 +56,7 @@ class Home extends Component
 
         $revenue = (float) $sales->clone()->sum('total_price');
         $salesCount = (int) $sales->clone()->count();
+        $unitsSold = (int) $sales->clone()->sum('total_units');
         $purchasesSum = (float) $purchases->clone()->sum(DB::raw('(purchase_price * COALESCE(box_qty,1)) + COALESCE(delivery_cn,0) + COALESCE(delivery_tj,0)'));
         $deliverySum = (float) $purchases->clone()->sum(DB::raw('COALESCE(delivery_cn,0) + COALESCE(delivery_tj,0)'));
         $expensesSum = (float) $expenses->sum('amount');
@@ -106,6 +109,7 @@ class Home extends Component
             'purchases' => $purchasesSum,
             'delivery' => $deliverySum,
             'salesCount' => $salesCount,
+            'unitsSold' => $unitsSold,
             'expenses' => $expensesSum,
             'deposits' => $depositsSum,
             'net' => $net,

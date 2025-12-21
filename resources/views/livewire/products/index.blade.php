@@ -84,7 +84,8 @@
                             </svg>
                         @endif
                     </span>
-                    <span class="whitespace-nowrap">{{ $product->category->name . ' - ' . $product->name }}</span>
+                    <span
+                        class="whitespace-nowrap">{{ $product->category->name ?? '' . ' - ' . $product->name }}</span>
                 </td>
                 <td class="px-4 py-3 text-sm font-semibold text-gray-800 whitespace-nowrap">{{ $product->quantity }}
                 </td>
